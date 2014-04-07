@@ -86,7 +86,7 @@ EXIT /b
 
 rem ========================================================================================================
 :build_webkit
-pushd !ROOT_DIR!\src\webkit
+pushd !ROOT_DIR!\src\qt\qtwebkit
 call :check_qmake
 call qmake.exe
 %MAKE_TOOL% %BUILD_TYPE% 2>&1 >> !WEBKIT_LOG_FILE!
