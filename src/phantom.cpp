@@ -501,8 +501,7 @@ void Phantom::doExit(int code)
     emit aboutToExit(code);
     m_terminated = true;
     m_returnValue = code;
-    foreach (QPointer<WebPage> page, m_pages)
-      page->deleteLater();
+    qDeleteAll(m_pages);
     m_pages.clear();
     m_page = 0;
     QApplication::instance()->exit(code);
