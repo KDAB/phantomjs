@@ -7,6 +7,7 @@ QT_CFG=''
 BUILD_CONFIRM=0
 COMPILE_JOBS=1
 MAKEFLAGS_JOBS=''
+BUILD_JAVA=
 
 if [[ "$MAKEFLAGS" != "" ]]; then
   MAKEFLAGS_JOBS=$(echo $MAKEFLAGS | egrep -o '\-j[0-9]+' | egrep -o '[0-9]+')
@@ -50,12 +51,16 @@ until [ -z "$1" ]; do
         "--confirm")
             BUILD_CONFIRM=1
             shift;;
+        "--java")
+            BUILD_JAVA=CONFIG+=javabindings
+            shift;;
         "--help")
             echo "Usage: $0 [--qt-config CONFIG] [--jobs NUM]"
             echo
             echo "  --confirm                   Silently confirm the build."
             echo "  --qt-config CONFIG          Specify extra config options to be used when configuring Qt"
             echo "  --jobs NUM                  How many parallel compile jobs to use. Defaults to 4."
+            echo "  --java                      Generate Java bindings for PhantomJS."
             echo
             exit 0
             ;;
@@ -89,11 +94,44 @@ EOF
     echo
 fi
 
+if [ ! -z "$BUILD_JAVA" ]; then
+    if [ -z "$(which swig)" ]; then
+        echo "Could not find swig executable in PATH, make sure it is installed."
+        echo "Swig is required to generated the Java bindings."
+        exit 1
+    fi
+
+    if [[ -z "$JAVA_HOME" || ! -d "$JAVA_HOME" ]]; then
+        echo "JAVA_HOME environment variable is not set."
+        echo "Set it to the path to your JDK, e.g.: export JAVA_HOME=/usr/lib/jvm/java-7-openjdk"
+        exit 1
+    fi
+    if [[ ! -d "$JAVA_HOME/include" ]]; then
+        echo "The JAVA_HOME folder does not have an include folder: $JAVA_HOME/include"
+        exit 1
+    fi
+    if [[ ! -d "$JAVA_HOME/include/linux" ]]; then
+        echo "The JAVA_HOME folder does not have an include/linux folder: $JAVA_HOME/include/linux"
+        exit 1
+    fi
+fi
+
 cd src/qt && ./preconfig.sh --jobs $COMPILE_JOBS --qt-config "$QT_CFG"
 export SQLITE3SRCDIR=$PWD/qtbase/3rdparty/sqlite/
 cd qtwebkit
 ../qtbase/bin/qmake $QMAKE_ARGS
 make -j$COMPILE_JOBS
 cd ../../..
-src/qt/qtbase/bin/qmake $QMAKE_ARGS
+
+if [ ! -z "$BUILD_JAVA" ]; then
+    swig -java -c++ -package phantom \
+         -I$PWD/src/qt/qtbase/include \
+         -I$PWD/src/qt/qtbase/include/QtCore \
+         -I$PWD/src \
+         -outdir $PWD/swig/phantom \
+         -o $PWD/swig/phantomjs_javabridge.cpp \
+         $PWD/swig/phantomjs_javabridge.i
+fi
+
+src/qt/qtbase/bin/qmake $QMAKE_ARGS $BUILD_JAVA
 make -j$COMPILE_JOBS

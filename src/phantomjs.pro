@@ -1,9 +1,21 @@
-TEMPLATE = app
+javabindings {
+    TEMPLATE = lib
+    LIBS += qt/qtbase/plugins/platforms/libqphantom.a
+    SOURCES += main_lib.cpp \
+               ../swig/phantomjs_javabridge.cpp
+    CONFIG += shared
+    CONFIG -= static
+    INCLUDEPATH += $$(JAVA_HOME)/include \
+                   $$(JAVA_HOME)/include/linux
+    DESTDIR = ../lib
+} else {
+    SOURCES += main.cpp
+    DESTDIR = ../bin
+}
+
 TARGET = phantomjs
 QT += network webkitwidgets
 CONFIG += console
-
-DESTDIR = ../bin
 
 RESOURCES = phantomjs.qrc \
     ghostdriver/ghostdriver.qrc
@@ -32,7 +44,6 @@ SOURCES += phantom.cpp \
     callback.cpp \
     webpage.cpp \
     webserver.cpp \
-    main.cpp \
     csconverter.cpp \
     utils.cpp \
     networkaccessmanager.cpp \
