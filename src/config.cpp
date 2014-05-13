@@ -602,6 +602,9 @@ bool Config::printDebugMessages() const
 void Config::setPrintDebugMessages(const bool value)
 {
     m_printDebugMessages = value;
+    // TODO: this should probably be redesigned. But if we don't set the value here, the
+    // debug message flag cannot be set directly via the Config.
+    Utils::printDebugMessages = value;
 }
 
 void Config::handleSwitch(const QString &sw)

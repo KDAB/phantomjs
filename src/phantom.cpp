@@ -39,6 +39,7 @@
 #include <QMetaObject>
 #include <QMetaProperty>
 #include <QStandardPaths>
+#include <QSslSocket>
 
 #include "consts.h"
 #include "terminal.h"
@@ -164,6 +165,16 @@ void Phantom::init()
 // public:
 Phantom *Phantom::instance() {
     if (NULL == phantomInstance) {
+        // Registering an alternative Message Handler
+        qInstallMessageHandler(Utils::messageHandler);
+
+#if defined(Q_OS_LINUX)
+        if (QSslSocket::supportsSsl()) {
+            // Don't perform on-demand loading of root certificates on Linux
+            QSslSocket::addDefaultCaCertificates(QSslSocket::systemCaCertificates());
+        }
+#endif
+
         phantomInstance = new Phantom();
         phantomInstance->init();
     }
