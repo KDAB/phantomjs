@@ -55,6 +55,7 @@ tools/dump_syms.app/
 [Dd]ebug*/
 [Rr]elease/
 bin/
+lib/
 phantomjs_plugin_import.cpp
 
 # swig generated files
