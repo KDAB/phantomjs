@@ -89,10 +89,13 @@ EOF
     echo
 fi
 
+# disable WebKit2 and the Netscape plugin API
+QTWEBKIT_ARGS="WEBKIT_CONFIG-=build_webkit2 WEBKIT_CONFIG-=netscape_plugin_api"
+
 cd src/qt && ./preconfig.sh --jobs $COMPILE_JOBS --qt-config "$QT_CFG"
 export SQLITE3SRCDIR=$PWD/qtbase/3rdparty/sqlite/
 cd qtwebkit
-../qtbase/bin/qmake $QMAKE_ARGS
+../qtbase/bin/qmake $QMAKE_ARGS $QTWEBKIT_ARGS
 make -j$COMPILE_JOBS
 cd ../../..
 src/qt/qtbase/bin/qmake $QMAKE_ARGS
