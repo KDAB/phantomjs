@@ -89,14 +89,22 @@ EOF
     echo
 fi
 
-# disable WebKit2 and the Netscape plugin API
-QTWEBKIT_ARGS="WEBKIT_CONFIG-=build_webkit2 WEBKIT_CONFIG-=netscape_plugin_api"
 
-cd src/qt && ./preconfig.sh --jobs $COMPILE_JOBS --qt-config "$QT_CFG"
+cd src/qt \
+  && ./preconfig.sh --jobs $COMPILE_JOBS --qt-config "$QT_CFG" \
+  || (echo "Failed to build QtBase." && exit 1)
+
+  # disable WebKit2 and the Netscape plugin API
+QTWEBKIT_ARGS="WEBKIT_CONFIG-=build_webkit2 WEBKIT_CONFIG-=netscape_plugin_api"
 export SQLITE3SRCDIR=$PWD/qtbase/3rdparty/sqlite/
-cd qtwebkit
-../qtbase/bin/qmake $QMAKE_ARGS $QTWEBKIT_ARGS
-make -j$COMPILE_JOBS
+
+cd qtwebkit \
+  && ../qtbase/bin/qmake $QMAKE_ARGS $QTWEBKIT_ARGS \
+  && make -j$COMPILE_JOBS \
+  || (echo "Failed to build QtWebKit." && exit 1)
+
 cd ../../..
-src/qt/qtbase/bin/qmake $QMAKE_ARGS
-make -j$COMPILE_JOBS
+
+src/qt/qtbase/bin/qmake $QMAKE_ARGS \
+  && make -j$COMPILE_JOBS \
+  || (echo "Failed to build PhantomJS." && exit 1)
