@@ -221,7 +221,14 @@ Utils::cleanupFromDebug()
 QString Utils::readResourceFileUtf8(const QString &resourceFilePath)
 {
     QFile f(resourceFilePath);
-    f.open(QFile::ReadOnly); //< It's OK to assume this succeed. If it doesn't, we have a bigger problem.
+    if (!f.exists()) {
+        qWarning("Could not read non-existing resource file \"%s\".", qPrintable(resourceFilePath));
+        return QString();
+    }
+    if (!f.open(QFile::ReadOnly)) {
+        qWarning("Could not open resource file \"%s\" for reading.", qPrintable(resourceFilePath));
+        return QString();
+    }
     return QString::fromUtf8(f.readAll());
 }
 

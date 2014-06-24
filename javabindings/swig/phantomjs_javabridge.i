@@ -19,7 +19,7 @@
 %pragma(java) jniclasscode=%{
   static {
     try {
-        System.loadLibrary("phantomjs");
+        System.loadLibrary("phantomjsjavabindings");
     } catch (UnsatisfiedLinkError e) {
       System.err.println("Failed to load native code library.\n" + e
                        + "\nMake sure to configure the VM arguments, such that the library can be found, e.g.:\n"

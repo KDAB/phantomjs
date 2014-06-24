@@ -52,7 +52,7 @@ until [ -z "$1" ]; do
             BUILD_CONFIRM=1
             shift;;
         "--java")
-            BUILD_JAVA=CONFIG+=javabindings
+            BUILD_JAVA=CONFIG+=build_javabindings
             shift;;
         "--help")
             echo "Usage: $0 [--qt-config CONFIG] [--jobs NUM]"
@@ -136,11 +136,11 @@ if [ ! -z "$BUILD_JAVA" ]; then
          -I$PWD/src/qt/qtbase/include \
          -I$PWD/src/qt/qtbase/include/QtCore \
          -I$PWD/src \
-         -outdir $PWD/swig/phantom \
-         -o $PWD/swig/phantomjs_javabridge.cpp \
-         $PWD/swig/phantomjs_javabridge.i
+         -outdir $PWD/javabindings/swig/phantom \
+         -o $PWD/javabindings/swig/phantomjs_javabridge.cpp \
+         $PWD/javabindings/swig/phantomjs_javabridge.i
 fi
 
-src/qt/qtbase/bin/qmake $QMAKE_ARGS \
+src/qt/qtbase/bin/qmake $QMAKE_ARGS $BUILD_JAVA \
   && make -j$COMPILE_JOBS \
   || (echo "Failed to build PhantomJS." && exit 1)

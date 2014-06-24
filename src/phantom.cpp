@@ -165,6 +165,11 @@ void Phantom::init()
 // public:
 Phantom *Phantom::instance() {
     if (NULL == phantomInstance) {
+        // initialize resources - this is required to use PhantomJS as a library,
+        // e.g. for language bindings
+        Q_INIT_RESOURCE(phantomjs);
+        Q_INIT_RESOURCE(ghostdriver);
+
         // Registering an alternative Message Handler
         qInstallMessageHandler(Utils::messageHandler);
 

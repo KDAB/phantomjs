@@ -1,3 +1,9 @@
 TEMPLATE = subdirs
-CONFIG += ordered
-SUBDIRS += src/phantomjs.pro
+
+SUBDIRS += src app
+app.depends = src
+
+build_javabindings {
+    SUBDIRS += javabindings
+    javabindings.depends = src
+}

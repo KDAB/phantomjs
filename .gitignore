@@ -56,7 +56,7 @@ tools/dump_syms.app/
 [Rr]elease/
 bin/
 lib/
-phantomjs_plugin_import.cpp
+app/phantomjs_plugin_import.cpp
 
 # swig generated files
-swig/*.cpp
+javabindings/swig/*.cpp
