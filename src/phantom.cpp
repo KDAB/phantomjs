@@ -87,7 +87,7 @@ void Phantom::init()
 
     if (m_config.versionFlag()) {
         m_terminated = true;
-        Terminal::instance()->cout(QString("%1").arg(PHANTOMJS_VERSION_STRING));
+        Terminal::instance()->cout(QString("PhantomJS: %1\nQt: %2").arg(PHANTOMJS_VERSION_STRING).arg(QT_VERSION_STR));
         return;
     }
 
