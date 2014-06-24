@@ -59,9 +59,10 @@ class Phantom : public QObject
     Q_PROPERTY(QVariantList cookies READ cookies WRITE setCookies)
     Q_PROPERTY(bool webdriverMode READ webdriverMode)
 
-private:
-    // Private constructor: the Phantom class is a singleton
+protected:
+    // Protected constructor: the Phantom class is a singleton
     Phantom(QObject *parent = 0);
+    static Phantom *s_instance;
     void init();
 
 public:

@@ -52,7 +52,20 @@
 #include "cookiejar.h"
 #include "childprocess.h"
 
-static Phantom *phantomInstance = NULL;
+struct StaticInitializer
+{
+    StaticInitializer()
+    {
+        // initialize resources - this is required to use PhantomJS as a library,
+        // e.g. for language bindings
+        Q_INIT_RESOURCE(phantomjs);
+        Q_INIT_RESOURCE(ghostdriver);
+    }
+};
+
+static StaticInitializer s_init;
+
+Phantom *Phantom::s_instance = Q_NULLPTR;
 
 // private:
 Phantom::Phantom(QObject *parent)
@@ -63,6 +76,9 @@ Phantom::Phantom(QObject *parent)
     , m_system(0)
     , m_childprocess(0)
 {
+    Q_ASSERT(!s_instance);
+    s_instance = this;
+
     QStringList args = QApplication::arguments();
 
     // Prepare the configuration object based on the command line arguments.
@@ -70,10 +86,20 @@ Phantom::Phantom(QObject *parent)
     m_config.init(&args);
     // Apply debug configuration as early as possible
     Utils::printDebugMessages = m_config.printDebugMessages();
+
+    // Registering an alternative Message Handler
+    qInstallMessageHandler(Utils::messageHandler);
 }
 
 void Phantom::init()
 {
+#if defined(Q_OS_LINUX)
+    if (QSslSocket::supportsSsl()) {
+        // Don't perform on-demand loading of root certificates on Linux
+        QSslSocket::addDefaultCaCertificates(QSslSocket::systemCaCertificates());
+    }
+#endif
+
     if (m_config.helpFlag()) {
         Terminal::instance()->cout(QString("%1").arg(m_config.helpText()));
         Terminal::instance()->cout("Any of the options that accept boolean values ('true'/'false') can also accept 'yes'/'no'.");
@@ -164,26 +190,12 @@ void Phantom::init()
 
 // public:
 Phantom *Phantom::instance() {
-    if (NULL == phantomInstance) {
-        // initialize resources - this is required to use PhantomJS as a library,
-        // e.g. for language bindings
-        Q_INIT_RESOURCE(phantomjs);
-        Q_INIT_RESOURCE(ghostdriver);
-
-        // Registering an alternative Message Handler
-        qInstallMessageHandler(Utils::messageHandler);
-
-#if defined(Q_OS_LINUX)
-        if (QSslSocket::supportsSsl()) {
-            // Don't perform on-demand loading of root certificates on Linux
-            QSslSocket::addDefaultCaCertificates(QSslSocket::systemCaCertificates());
-        }
-#endif
-
-        phantomInstance = new Phantom();
-        phantomInstance->init();
+    if (!s_instance) {
+        new Phantom();
+        Q_ASSERT(s_instance);
+        s_instance->init();
     }
-    return phantomInstance;
+    return s_instance;
 }
 
 Phantom::~Phantom()

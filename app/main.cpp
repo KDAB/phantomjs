@@ -88,12 +88,10 @@ int main(int argc, char** argv)
     app.setOrganizationName("Ofi Labs");
     app.setOrganizationDomain("www.ofilabs.com");
     app.setApplicationVersion(PHANTOMJS_VERSION_STRING);
-
-    // Get the Phantom singleton, this also initializes the PhantomJS Qt resources
-    Phantom *phantom = Phantom::instance();
-
-    // now that the resources are available, set the window icon
     app.setWindowIcon(QIcon(":/phantomjs-icon.png"));
+
+    // Get the Phantom singleton
+    Phantom *phantom = Phantom::instance();
 
     // Start script execution
     if (phantom->execute()) {

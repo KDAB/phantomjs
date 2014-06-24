@@ -60,3 +60,4 @@ app/phantomjs_plugin_import.cpp
 
 # swig generated files
 javabindings/swig/*.cpp
+javabindings/swig/*.h

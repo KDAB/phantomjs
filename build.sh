@@ -136,6 +136,7 @@ if [ ! -z "$BUILD_JAVA" ]; then
          -I$PWD/src/qt/qtbase/include \
          -I$PWD/src/qt/qtbase/include/QtCore \
          -I$PWD/src \
+         -I$PWD/javabindings \
          -outdir $PWD/javabindings/swig/phantom \
          -o $PWD/javabindings/swig/phantomjs_javabridge.cpp \
          $PWD/javabindings/swig/phantomjs_javabridge.i
