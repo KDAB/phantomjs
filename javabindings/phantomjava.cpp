@@ -32,7 +32,9 @@
 PhantomJava::PhantomJava(QObject *parent)
     : Phantom(parent)
 {
+    qDebug() << "Initializing new PhantomJava instance" << this;
     init();
+    qDebug() << "Finished initialization" << this;
 }
 
 PhantomJava::~PhantomJava()
@@ -42,9 +44,11 @@ PhantomJava::~PhantomJava()
 
 PhantomJava *PhantomJava::instance()
 {
+    qDebug() << Q_FUNC_INFO << s_instance;
     if (!s_instance) {
         new PhantomJava;
     }
+    qDebug() << Q_FUNC_INFO << dynamic_cast<PhantomJava*>(s_instance);
     Q_ASSERT(dynamic_cast<PhantomJava*>(s_instance));
     return static_cast<PhantomJava*>(s_instance);
 }

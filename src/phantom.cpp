@@ -76,6 +76,7 @@ Phantom::Phantom(QObject *parent)
     , m_system(0)
     , m_childprocess(0)
 {
+    qDebug() << "Setting phantom instance" << this << s_instance;
     Q_ASSERT(!s_instance);
     s_instance = this;
 
@@ -191,10 +192,13 @@ void Phantom::init()
 // public:
 Phantom *Phantom::instance() {
     if (!s_instance) {
+        qDebug() << "Creating new plain phantom instance";
         new Phantom();
         Q_ASSERT(s_instance);
+        qDebug() << "Initializing phantom instance" << s_instance;
         s_instance->init();
     }
+    qDebug() << Q_FUNC_INFO << s_instance;
     return s_instance;
 }
 
