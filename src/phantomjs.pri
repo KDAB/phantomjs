@@ -1,4 +1,4 @@
-QT += network webkitwidgets
+QT += network webkitwidgets printsupport
 LIBS += -L$$PWD/qt/qtbase/plugins/platforms/ -lqphantom
 
 mac {

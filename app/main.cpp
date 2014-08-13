@@ -49,7 +49,7 @@ using namespace google_breakpad;
 static google_breakpad::ExceptionHandler* eh;
 #endif
 
-#if QT_VERSION != QT_VERSION_CHECK(5, 3, 1)
+#if QT_VERSION != QT_VERSION_CHECK(5, 3, 2)
 #error Something is wrong with the setup. Please report to the mailing list!
 #endif
 

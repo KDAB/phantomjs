@@ -1,4 +1,6 @@
+TEMPLATE = app
 SOURCES += main.cpp
+
 DESTDIR = ../bin
 
 TARGET = phantomjs
