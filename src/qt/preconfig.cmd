@@ -25,7 +25,6 @@ set QT_CONFIG=!QT_CONFIG! -qt-zlib
 set QT_CONFIG=!QT_CONFIG! -qt-libpng
 set QT_CONFIG=!QT_CONFIG! -qt-libjpeg
 set QT_CONFIG=!QT_CONFIG! -openssl-linked
-set QT_CONFIG=!QT_CONFIG! -platform win32-msvc2010
 
 configure !QT_CONFIG!
 
