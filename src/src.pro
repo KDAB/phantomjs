@@ -57,7 +57,6 @@ OTHER_FILES += \
 win32: RC_FILE = phantomjs_win.rc
 os2:   RC_FILE = phantomjs_os2.rc
 
-include(gif/gif.pri)
 include(mongoose/mongoose.pri)
 include(linenoise/linenoise.pri)
 include(qcommandline/qcommandline.pri)

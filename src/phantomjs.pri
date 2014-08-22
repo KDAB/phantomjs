@@ -1,5 +1,8 @@
 QT += network webkitwidgets printsupport
-LIBS += -L$$PWD/qt/qtbase/plugins/platforms/ -lqphantom
+
+!win32:!winrt {
+  QTPLUGIN += qphantom
+}
 
 mac {
     QMAKE_CXXFLAGS += -fvisibility=hidden
