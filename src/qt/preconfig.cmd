@@ -2,6 +2,7 @@
 SETLOCAL EnableExtensions EnableDelayedExpansion
 
 set BUILD_TYPE=%1
+set MAKE_TOOL=%2
 
 :: Build Qt5
 pushd qtbase
