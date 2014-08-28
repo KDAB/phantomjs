@@ -20,5 +20,6 @@ INCLUDEPATH += $$(JAVA_HOME)/include \
 DESTDIR = ../lib
 
 LIBS += -L../lib -lphantomjs
+TARGETDEPS += ../lib/libphantomjs.a
 
 include(../src/phantomjs.pri)

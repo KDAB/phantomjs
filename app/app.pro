@@ -10,6 +10,7 @@ INCLUDEPATH = ../src
 include(../src/phantomjs.pri)
 
 LIBS += -L../lib -lphantomjs
+TARGETDEPS += ../lib/libphantomjs.a
 
 linux*|mac|openbsd* {
     INCLUDEPATH += breakpad/src
