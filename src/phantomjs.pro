@@ -8,11 +8,6 @@ DESTDIR = ../bin
 RESOURCES = phantomjs.qrc \
     ghostdriver/ghostdriver.qrc
 
-!win32:!winrt: {
-  # this is only available on non-windows platforms
-  QTPLUGIN += qphantom
-}
-
 HEADERS += csconverter.h \
     phantom.h \
     callback.h \
@@ -118,11 +113,6 @@ win32-msvc* {
     SOURCES += breakpad/src/client/windows/handler/exception_handler.cc \
       breakpad/src/client/windows/crash_generation/crash_generation_client.cc \
       breakpad/src/common/windows/guid_string.cc
-    CONFIG(static) {
-        DEFINES += STATIC_BUILD
-        QTPLUGIN += \
-            qico
-    }
 }
 
 openbsd* {
