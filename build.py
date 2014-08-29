@@ -171,6 +171,7 @@ class PhantomJSBuilder(object):
                     "-no-pkg-config",
                     "-no-c++11", # Build fails on mac right now with C++11 TODO: is this still valid?
                 ])
+                # NOTE: fontconfig is not required on Darwin (we use Core Text for font enumeration)
             else:
                 # options specific to other Unixes, like Linux, BSD, ...
                 platformOptions.extend([
