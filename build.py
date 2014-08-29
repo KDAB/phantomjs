@@ -93,10 +93,9 @@ class PhantomJSBuilder(object):
         print("Executing in %s: %s" % (workingDirectory, " ".join(str(v) for v in command)))
         if self.options.dry_run:
             return 0
-        with subprocess.Popen(command, stdout=sys.stdout, stderr=sys.stderr, cwd=workingDirectory) as process:
-            process.wait()
-            ret = process.returncode
-        return ret
+        process = subprocess.Popen(command, stdout=sys.stdout, stderr=sys.stderr, cwd=workingDirectory)
+        process.wait()
+        return process.returncode
 
     # run git clean in the specified path
     def gitClean(self, path):
