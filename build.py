@@ -89,8 +89,10 @@ class PhantomJSBuilder(object):
 
     # run the given command in the given working directory
     def execute(self, command, workingDirectory):
+        # python 2 compatibility: manually convert to strings
+        command = [str(c) for c in command]
         workingDirectory = os.path.abspath(workingDirectory)
-        print("Executing in %s: %s" % (workingDirectory, " ".join(str(v) for v in command)))
+        print("Executing in %s: %s" % (workingDirectory, " ".join(command)))
         if self.options.dry_run:
             return 0
         process = subprocess.Popen(command, stdout=sys.stdout, stderr=sys.stderr, cwd=workingDirectory)
