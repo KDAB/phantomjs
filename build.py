@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 #
@@ -90,7 +90,7 @@ class PhantomJSBuilder(object):
     # run the given command in the given working directory
     def execute(self, command, workingDirectory):
         workingDirectory = os.path.abspath(workingDirectory)
-        print("Executing in %s: %s" % (workingDirectory, " ".join(command)))
+        print("Executing in %s: %s" % (workingDirectory, " ".join(str(v) for v in command)))
         if self.options.dry_run:
             return 0
         with subprocess.Popen(command, stdout=sys.stdout, stderr=sys.stderr, cwd=workingDirectory) as process:
@@ -355,7 +355,8 @@ use the premade binary packages on supported operating systems.
 For details, please go the the web site: http://phantomjs.org/download.html.
 """)
             while True:
-                print("Do you want to continue (Y/n)?", end=" ", flush=True)
+                sys.stdout.write("Do you want to continue (Y/n)? ")
+                sys.stdout.flush()
                 answer = sys.stdin.readline().strip().lower()
                 if answer == "n":
                     print("Cancelling PhantomJS build.")
@@ -368,7 +369,8 @@ For details, please go the the web site: http://phantomjs.org/download.html.
         builder = PhantomJSBuilder(options)
         builder.run()
     except RuntimeError as error:
-        print("\nERROR: Failed to build PhantomJS! %s" % error, file=sys.stderr)
+        sys.stderr.write("\nERROR: Failed to build PhantomJS! %s\n" % error)
+        sys.stderr.flush()
 
 if __name__ == "__main__":
     main()
