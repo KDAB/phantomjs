@@ -56,24 +56,12 @@ def which(program):
                 return exe_file
     return None
 
-# run the given command in the given working directory
-def run(command, workingDirectory):
-    with subprocess.Popen(command, stdout=sys.stdout, stderr=sys.stderr, cwd=os.path.normpath(workingDirectory)) as process:
-        process.wait()
-        ret = process.returncode
-    return ret
-
 # returns the path to the QMake executable which gets built in our internal QtBase fork
 def qmakePath():
     exe = "qmake"
     if platform.system() == "Windows":
         exe += ".exe"
     return os.path.abspath("src/qt/qtbase/bin/" + exe)
-
-# run git clean in the specified path
-def gitClean(path):
-    print("Running git clean in %s..." % path)
-    return run(["git", "clean", "-xfd"], path)
 
 class PhantomJSBuilder(object):
     options = {}
@@ -99,22 +87,37 @@ class PhantomJSBuilder(object):
             self.makeCommand = ["make"]
             self.makeCommand.extend(flags)
 
+    # run the given command in the given working directory
+    def execute(self, command, workingDirectory):
+        workingDirectory = os.path.abspath(workingDirectory)
+        print("Executing in %s: %s" % (workingDirectory, " ".join(command)))
+        if self.options.dry_run:
+            return 0
+        with subprocess.Popen(command, stdout=sys.stdout, stderr=sys.stderr, cwd=workingDirectory) as process:
+            process.wait()
+            ret = process.returncode
+        return ret
+
+    # run git clean in the specified path
+    def gitClean(self, path):
+        return self.execute(["git", "clean", "-xfd"], path)
+
     # run make, nmake or jom in the specified path
     def make(self, path):
-        return run(self.makeCommand, path)
+        return self.execute(self.makeCommand, path)
 
     # run qmake in the specified path
     def qmake(self, path, options):
         qmake = qmakePath()
         # verify that qmake was properly built
-        if not isExe(qmake):
+        if not isExe(qmake) and not self.options.dry_run:
             raise RuntimeError("Could not find QMake executable: %s" % qmake)
         command = [qmake]
         if self.options.qmake_args:
             command.extend(self.options.qmake_args)
         if options:
             command.extend(options)
-        return run(command, path)
+        return self.execute(command, path)
 
     # returns a list of platform specific Qt Base configure options
     def platformQtConfigureOptions(self):
@@ -217,7 +220,7 @@ class PhantomJSBuilder(object):
         elif self.options.release:
             configure.append("-release")
 
-        if run(configure, "src/qt/qtbase") != 0:
+        if self.execute(configure, "src/qt/qtbase") != 0:
             raise RuntimeError("Configuration of Qt Base failed.")
 
     # build Qt Base
@@ -288,6 +291,8 @@ def parseArguments():
                             help="How many parallel compile jobs to use. Defaults to %d." % multiprocessing.cpu_count())
     parser.add_argument("-c", "--confirm", action="store_true",
                             help="Silently confirm the build.")
+    parser.add_argument("-n", "--dry-run", action="store_true",
+                            help="Only print what would be done without actually executing anything.")
 
     # NOTE: silent build does not exist on windows apparently
     if platform.system() != "Windows":
