@@ -5,6 +5,11 @@ CONFIG -= static
 TARGET = phantomjsjavabindings
 DESTDIR = ../lib
 
+!win32:!winrt: {
+  # this is only available on non-windows platforms
+  QTPLUGIN += qphantom
+}
+
 INCLUDEPATH += $$(JAVA_HOME)/include \
                ../src
 
