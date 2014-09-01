@@ -91,10 +91,10 @@ int main(int argc, char** argv)
 {
     // Setup Google Breakpad exception handler
 #ifdef Q_OS_LINUX
-    google_breakpad::ExceptionHandler eh("/tmp", NULL, Utils::exceptionHandler, NULL, true);
+    google_breakpad::ExceptionHandler eh("/tmp", NULL, exceptionHandler, NULL, true);
 #endif
 #ifdef Q_OS_MAC
-    google_breakpad::ExceptionHandler eh("/tmp", NULL, Utils::exceptionHandler, NULL, true, NULL);
+    google_breakpad::ExceptionHandler eh("/tmp", NULL, exceptionHandler, NULL, true, NULL);
 #endif
 #ifdef Q_OS_WIN32
     // This is needed for CRT to not show dialog for invalid param
