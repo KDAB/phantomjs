@@ -1,15 +1,17 @@
 TEMPLATE = app
-SOURCES += main.cpp
-
-DESTDIR = ../bin
+CONFIG += console
 
 TARGET = phantomjs
-CONFIG += console
+DESTDIR = ../bin
+
 INCLUDEPATH = ../src
+
+SOURCES += main.cpp
 
 include(../src/phantomjs.pri)
 
 LIBS += -L../lib -lphantomjs
+TARGETDEPS += ../lib/libphantomjs.a
 
 linux*|mac|openbsd* {
     INCLUDEPATH += breakpad/src
@@ -48,7 +50,6 @@ mac {
 
     OBJECTIVE_SOURCES += breakpad/src/common/mac/MachIPC.mm
 }
-
 
 win32-msvc* {
     INCLUDEPATH += breakpad/src

@@ -1,5 +1,4 @@
 QT += network webkitwidgets printsupport
-LIBS += -L$$PWD/qt/qtbase/plugins/platforms/ -lqphantom
 
 mac {
     QMAKE_CXXFLAGS += -fvisibility=hidden
@@ -11,11 +10,6 @@ mac {
 
 win32-msvc* {
     LIBS += -lCrypt32 -llibxml2_a
-    CONFIG(static) {
-        DEFINES += STATIC_BUILD
-        QTPLUGIN += \
-            qico
-    }
 }
 
 openbsd* {

@@ -2,6 +2,7 @@
 SETLOCAL EnableExtensions EnableDelayedExpansion
 
 set BUILD_TYPE=%1
+set MAKE_TOOL=%2
 
 :: Build Qt5
 pushd qtbase
@@ -24,8 +25,7 @@ set QT_CONFIG=!QT_CONFIG! -icu
 set QT_CONFIG=!QT_CONFIG! -qt-zlib
 set QT_CONFIG=!QT_CONFIG! -qt-libpng
 set QT_CONFIG=!QT_CONFIG! -qt-libjpeg
-set QT_CONFIG=!QT_CONFIG! -openssl-linked
-set QT_CONFIG=!QT_CONFIG! -platform win32-msvc2010
+set QT_CONFIG=!QT_CONFIG! -openssl-linked "%OPENSSL_LIBS%"
 
 configure !QT_CONFIG!
 

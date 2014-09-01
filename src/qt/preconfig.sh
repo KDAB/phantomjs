@@ -13,6 +13,8 @@ QT_CFG+=' -qpa phantom'         # Default to our custom QPA platform
 if [[ $OSTYPE != darwin* ]]; then
     QT_CFG+=' -fontconfig'      # Fontconfig for better font matching
     QT_CFG+=' -icu'             # ICU for QtWebKit (which provides the OSX headers) but not QtBase
+else
+    QT_CFG+=' -no-pkg-config'
 fi
 
 QT_CFG+=' -release'             # Build only for release (no debugging support)
@@ -40,7 +42,6 @@ QT_CFG+=' -no-sm'
 QT_CFG+=' -no-xinerama'
 QT_CFG+=' -no-xkb'
 QT_CFG+=' -no-xcb'
-QT_CFG+=' -no-pkg-config'
 QT_CFG+=' -no-kms'
 QT_CFG+=' -no-linuxfb'
 QT_CFG+=' -no-directfb'

@@ -80,7 +80,7 @@ EXIT /b
 rem ========================================================================================================
 :build_qt
 pushd !ROOT_DIR!\src\qt
-call preconfig.cmd !BUILD_TYPE!
+call preconfig.cmd %BUILD_TYPE% %MAKE_TOOL%
 popd
 EXIT /b
 

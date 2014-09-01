@@ -1,6 +1,13 @@
 TEMPLATE = lib
+CONFIG += shared
+CONFIG -= static
 
 TARGET = phantomjsjavabindings
+DESTDIR = ../lib
+
+INCLUDEPATH += $$(JAVA_HOME)/include \
+               $$(JAVA_HOME)/include/linux \
+               ../src
 
 SOURCES += javabindings.cpp \
            phantomjava.cpp \
@@ -8,17 +15,8 @@ SOURCES += javabindings.cpp \
 
 HEADERS += phantomjava.h
 
-CONFIG += shared
-CONFIG -= static
-
 RESOURCES += phantomjava.qrc
 
-INCLUDEPATH += $$(JAVA_HOME)/include \
-               $$(JAVA_HOME)/include/linux \
-               ../src
-
-DESTDIR = ../lib
-
-LIBS += -L../lib -lphantomjs
-
 include(../src/phantomjs.pri)
+LIBS += -L../lib -lphantomjs
+TARGETDEPS += ../lib/libphantomjs.a
