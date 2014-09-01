@@ -6,8 +6,10 @@ TARGET = phantomjsjavabindings
 DESTDIR = ../lib
 
 INCLUDEPATH += $$(JAVA_HOME)/include \
-               $$(JAVA_HOME)/include/linux \
                ../src
+
+linux: INCLUDEPATH += $$(JAVA_HOME)/include/linux
+win32: INCLUDEPATH += $$(JAVA_HOME)/include/win32
 
 SOURCES += javabindings.cpp \
            phantomjava.cpp \

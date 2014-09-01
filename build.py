@@ -270,16 +270,47 @@ class PhantomJSBuilder(object):
     # build PhantomJS
     def buildPhantomJS(self):
         print("Configuring PhantomJS, please wait...")
-        if self.qmake(".", self.options.phantomjs_qmake_args) != 0:
+        qmakeArgs = self.options.phantomjs_qmake_args
+        if self.options.java_bindings:
+            qmakeArgs.append("CONFIG+=build_javabindings")
+        if self.qmake(".", qmakeArgs) != 0:
             raise RuntimeError("Configuration of PhantomJS failed.")
         print("Building PhantomJS, please wait...")
         if self.make(".") != 0:
             raise RuntimeError("Building PhantomJS failed.")
 
+    # generate java bindings using SWIG
+    def generateJavaBindings(self):
+        if not which("swig"):
+            raise RuntimeError("Could not find SWIG executable in your PATH.")
+        javaHome = os.getenv("JAVA_HOME")
+        if not javaHome:
+            raise RuntimeError("The JAVA_HOME environment variable is not set.")
+        if not os.path.isdir(javaHome):
+            raise RuntimeError("The JAVA_HOME=%s environment variable does not point to an existing folder." % javaHome)
+        if not os.path.isdir(javaHome + "/include"):
+            raise RuntimeError("The JAVA_HOME=%s directory does not contain an \"include\" folder." % javaHome)
+
+        print("Generating Java bindings using SWIG")
+
+        swig = ["swig", "-java", "-c++", "-package", "phantom",
+            "-I" + os.path.abspath("src/qt/qtbase/include"),
+            "-I" + os.path.abspath("src/qt/qtbase/include/QtCore"),
+            "-I" + os.path.abspath("src"),
+            "-I" + os.path.abspath("javabindings"),
+            "-outdir", os.path.abspath("javabindings/swig/phantom"),
+            "-o", os.path.abspath("javabindings/swig/phantomjs_javabridge.cpp"),
+            os.path.abspath("javabindings/swig/phantomjs_javabridge.i")
+        ]
+        if self.execute(swig, ".") != 0:
+            raise RuntimeError("Failed to generate JavaBindings with SWIG.")
+
     # run all build steps required to get a final PhantomJS binary at the end
     def run(self):
         self.buildQtBase()
         self.buildQtWebKit()
+        if self.options.java_bindings:
+          self.generateJavaBindings()
         self.buildPhantomJS()
 
 # parse command line arguments and return the result
@@ -301,14 +332,20 @@ def parseArguments():
         parser.add_argument("-s", "--silent", action="store_true",
                             help="Reduce output during compilation.")
 
+
+    experimental = parser.add_argument_group("experimental options")
+    experimental.add_argument("--java-bindings", action="store_true",
+                            help="Build Java bindings for PhantomJS. Requires the SWIG to be available in your PATH "
+                                 "and the JAVA_HOME environment variable must point to your JDK installation directory.")
+
     advanced = parser.add_argument_group("advanced options")
-    advanced.add_argument("--qmake-args", type=str, action="append",
+    advanced.add_argument("--qmake-args", type=str, action="append", default=[],
                             help="Additional arguments that will be passed to all QMake calls.")
     advanced.add_argument("--webkit-qmake-args", type=str, action="append",
                             help="Additional arguments that will be passed to the Qt WebKit QMake call.")
-    advanced.add_argument("--phantomjs-qmake-args", type=str, action="append",
+    advanced.add_argument("--phantomjs-qmake-args", type=str, action="append", default=[],
                             help="Additional arguments that will be passed to the PhantomJS QMake call.")
-    advanced.add_argument("--qt-config", type=str, action="append",
+    advanced.add_argument("--qt-config", type=str, action="append", default=[],
                             help="Additional arguments that will be passed to Qt Base configure.")
     advanced.add_argument("--git-clean-qtbase", action="store_true",
                             help="Run git clean in the Qt Base folder.\n"
