@@ -41,6 +41,9 @@
 #ifdef Q_OS_MAC
 #include "client/mac/handler/exception_handler.h"
 #endif
+#ifdef Q_OS_WIN32
+#include "client/windows/handler/exception_handler.h"
+#endif
 
 #include <QApplication>
 
@@ -52,6 +55,37 @@ static google_breakpad::ExceptionHandler* eh;
 #if QT_VERSION != QT_VERSION_CHECK(5, 3, 2)
 #error Something is wrong with the setup. Please report to the mailing list!
 #endif
+
+namespace {
+#ifdef Q_OS_WIN32
+bool exceptionHandler(const TCHAR* dump_path, const TCHAR* minidump_id,
+                             void* context, EXCEPTION_POINTERS* exinfo,
+                             MDRawAssertionInfo *assertion, bool succeeded)
+{
+    Q_UNUSED(exinfo);
+    Q_UNUSED(assertion);
+    Q_UNUSED(context);
+
+    fprintf(stderr, "PhantomJS has crashed. Please read the crash reporting guide at " \
+                    "https://github.com/ariya/phantomjs/wiki/Crash-Reporting and file a " \
+                    "bug report at https://github.com/ariya/phantomjs/issues/new with the " \
+                    "crash dump file attached: %ls\\%ls.dmp\n",
+                    dump_path, minidump_id);
+    return succeeded;
+}
+#else
+bool exceptionHandler(const char* dump_path, const char* minidump_id, void* context, bool succeeded)
+{
+    Q_UNUSED(context);
+    fprintf(stderr, "PhantomJS has crashed. Please read the crash reporting guide at " \
+                    "https://github.com/ariya/phantomjs/wiki/Crash-Reporting and file a " \
+                    "bug report at https://github.com/ariya/phantomjs/issues/new with the " \
+                    "crash dump file attached: %s/%s.dmp\n",
+                    dump_path, minidump_id);
+    return succeeded;
+}
+#endif
+}
 
 int main(int argc, char** argv)
 {
@@ -70,13 +104,13 @@ int main(int argc, char** argv)
     DWORD cbBuffer = ExpandEnvironmentStrings(TEXT("%TEMP%"), NULL, 0);
 
     if (cbBuffer == 0) {
-        eh = new ExceptionHandler(TEXT("."), NULL, Utils::exceptionHandler, NULL, ExceptionHandler::HANDLER_ALL);
+        eh = new ExceptionHandler(TEXT("."), NULL, exceptionHandler, NULL, ExceptionHandler::HANDLER_ALL);
     } else {
         LPWSTR szBuffer = reinterpret_cast<LPWSTR>(malloc(sizeof(TCHAR) * (cbBuffer + 1)));
 
         if (ExpandEnvironmentStrings(TEXT("%TEMP%"), szBuffer, cbBuffer + 1) > 0) {
             wstring lpDumpPath(szBuffer);
-            eh = new ExceptionHandler(lpDumpPath, NULL, Utils::exceptionHandler, NULL, ExceptionHandler::HANDLER_ALL);
+            eh = new ExceptionHandler(lpDumpPath, NULL, exceptionHandler, NULL, ExceptionHandler::HANDLER_ALL);
         }
         free(szBuffer);
     }

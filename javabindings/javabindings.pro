@@ -8,10 +8,13 @@ DESTDIR = ../lib
 !win32:!winrt: {
   # this is only available on non-windows platforms
   QTPLUGIN += qphantom
+} else {
+  QTPLUGIN += qwindows
 }
 
 INCLUDEPATH += $$(JAVA_HOME)/include \
-               ../src
+               ../src \
+               $$PWD
 
 linux: INCLUDEPATH += $$(JAVA_HOME)/include/linux
 win32: INCLUDEPATH += $$(JAVA_HOME)/include/win32
@@ -26,4 +29,5 @@ RESOURCES += phantomjava.qrc
 
 include(../src/phantomjs.pri)
 LIBS += -L../lib -lphantomjs
-TARGETDEPS += ../lib/libphantomjs.a
+win32:TARGETDEPS += ../lib/phantomjs.lib
+else:TARGETDEPS += ../lib/libphantomjs.a

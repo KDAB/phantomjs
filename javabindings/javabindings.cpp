@@ -29,4 +29,8 @@
 
 #include <QtPlugin>
 
+#ifdef Q_OS_WIN32
+Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
+#else
 Q_IMPORT_PLUGIN(PhantomIntegrationPlugin)
+#endif

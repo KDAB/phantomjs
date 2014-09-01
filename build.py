@@ -281,7 +281,12 @@ class PhantomJSBuilder(object):
 
     # generate java bindings using SWIG
     def generateJavaBindings(self):
-        if not which("swig"):
+        if platform.system() == "Windows":
+            swigExe = "swig.exe"
+        else:
+            swigExe = "swig"
+
+        if not which(swigExe):
             raise RuntimeError("Could not find SWIG executable in your PATH.")
         javaHome = os.getenv("JAVA_HOME")
         if not javaHome:
@@ -293,7 +298,7 @@ class PhantomJSBuilder(object):
 
         print("Generating Java bindings using SWIG")
 
-        swig = ["swig", "-java", "-c++", "-package", "phantom",
+        swig = [swigExe, "-java", "-c++", "-package", "phantom",
             "-I" + os.path.abspath("src/qt/qtbase/include"),
             "-I" + os.path.abspath("src/qt/qtbase/include/QtCore"),
             "-I" + os.path.abspath("src"),
