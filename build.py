@@ -232,7 +232,7 @@ class PhantomJSBuilder(object):
             return
 
         if self.options.git_clean_qtbase:
-            gitClean("src/qt/qtbase")
+            self.gitClean("src/qt/qtbase")
 
         if self.options.git_clean_qtbase or not self.options.skip_configure_qtbase:
             self.configureQtBase()
@@ -248,7 +248,7 @@ class PhantomJSBuilder(object):
             return
 
         if self.options.git_clean_qtwebkit:
-            gitClean("src/qt/qtwebkit")
+            self.gitClean("src/qt/qtwebkit")
 
         os.putenv("SQLITE3SRCDIR", os.path.abspath("src/qt/qtbase/src/3rdparty/sqlite"))
 
