@@ -310,8 +310,16 @@ class PhantomJSBuilder(object):
         if self.execute(swig, ".") != 0:
             raise RuntimeError("Failed to generate JavaBindings with SWIG.")
 
+    # ensure the git submodules are all available
+    def ensureSubmodulesAvailable(self):
+        if self.execute(["git", "submodule", "init"], ".") != 0:
+            raise RuntimeError("Initialization of git submodules failed.")
+        if self.execute(["git", "submodule", "update", "--init"], ".") != 0:
+            raise RuntimeError("Initial update of git submodules failed.")
+
     # run all build steps required to get a final PhantomJS binary at the end
     def run(self):
+        self.ensureSubmodulesAvailable();
         self.buildQtBase()
         self.buildQtWebKit()
         if self.options.java_bindings:
