@@ -17,7 +17,7 @@ if (system.args.length < 3) {
         margin: "1cm",
         /* default header/footer for pages that don't have custom overwrites (see below) */
         header: {
-            height: "1cm",
+            height: "2cm",
             contents: phantom.callback(function(pageNum, numPages) {
                 if (pageNum == 1) {
                     return "";
@@ -26,7 +26,7 @@ if (system.args.length < 3) {
             })
         },
         footer: {
-            height: "1cm",
+            height: "2cm",
             contents: phantom.callback(function(pageNum, numPages) {
                 if (pageNum == numPages) {
                     return "";
